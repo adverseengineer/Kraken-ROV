@@ -1,0 +1,1 @@
+inputs and pigpio must be installed under the root user, not pi

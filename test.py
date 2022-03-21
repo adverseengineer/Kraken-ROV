@@ -1,52 +1,45 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 #Nick Sells 2022
 
+import inputs, pigpio, time, sys, traceback
 from config import *
-from inputs import devices, get_gamepad
-import pigpio
-import time
 
-if len(devices.gamepads) < 1:
-	raise RuntimeError("unable to detect gamepad")
+if len(inputs.devices.gamepads) != 1:
+	print("please connect exactly one controller")
+	sys.exit(-1)
 
-LED_PIN = 23
+LED_PIN = 26
 close_requested = False
 
-pi = pigpio.pi()
+pi = pigpio.pi('raspberrypi')
+
 pi.set_mode(LED_PIN, pigpio.OUTPUT)
 
 def map(t, in_min, in_max, out_min, out_max):
 	return out_min + (t - in_min) * (out_max - out_min) / (in_max - in_min)
 
-def init_esc():
-	for _, pin in enumerate(ESC_PIN):
-		pi.set_servo_pulsewidth(pin, ESC_US_HALT)
-	
-	time.sleep(ESC_INIT_DELAY)
-
-#TODO: try using set_servo_pulsewidth to control an esc
-#it seems to be a similar case to the arduino servo stuff working perfectly to control an esc
-
 while not close_requested:
 
 	try:
-		events = get_gamepad()
+		events = inputs.get_gamepad()
 		for event in events:
 			if event.code == "ABS_Z":
-				val = map(
+				val = round(map(
 					event.state,
 					XB_AXIS_MIN[event.code],
 					XB_AXIS_MAX[event.code],
 					0,
-					255)
+					255
+				))
+
 				pi.set_PWM_dutycycle(LED_PIN, val)
-				
-	except KeyboardInterrupt:
-		close_requested = True
-		print("Ctrl+C caught! Goodbye!")
+				print(val)
 
 	except OSError:
-		close_requested = True
-		print("controller has been disconnected") 
+		print("OS Error! This usually means you unplugged the controller")
+		#close_requested = True
+
+	except Exception:
+		print("Plain Exception! This is usally an issue with pigpiod")
 
 pi.stop()
