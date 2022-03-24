@@ -28,14 +28,17 @@ while not close_requested:
 	try:
 		events = inputs.get_gamepad()
 		for event in events:
-			val = map(event.state, XB_AXIS_MIN[event.code], XB_AXIS_MAX[event.code], 0, 255)
-			match event.code:
-				case "ABS_X":
-					pi.set_PWM_dutycycle(LED_PIN_1, val)
-				case "ABS_Y":
-					pi.set_PWM_dutycycle(LED_PIN_2, val)
-				case "ABS_Z":
-					pi.set_PWM_dutycycle(LED_PIN_3, val)
+			if event.code == "ABS_Y":
+				val = map(event.state, -32768, 32767, ESC_US_REVERSE, ESC_US_FORWARD)
+				pi.set_servo_pulsewidth(LED_PIN_1, val)
+			elif event.code == "ABS_RY":
+				val = map(event.state, 32767, -32768, ESC_US_REVERSE, ESC_US_FORWARD)
+				pi.set_servo_pulsewidth(LED_PIN_2, val)
+			elif event.code == "ABS_Z":
+				if event.state == 255:
+					pi.set_servo_pulsewidth(LED_PIN_3, SAVOX_US_CLOSE)
+				elif event.state == 0:
+					pi.set_servo_pulsewidth(LED_PIN_3, SAVOX_US_OPEN)
 
 	except OSError:
 		print("OS Error! This usually means you unplugged the controller")
@@ -43,5 +46,6 @@ while not close_requested:
 
 	except Exception:
 		print("Plain Exception! This is usally an issue with pigpiod")
+		print(traceback.format_exc())
 
 pi.stop()

@@ -21,17 +21,21 @@ XB_AXIS_MAX = {
 }
 
 ESC_PIN = {
-	"BL": 4,
-	"ML": 17,
-	"FL": 27,
-	"FR": 22,
-	"MR": 5,
-	"BR": 6
+	"BL": 26, #pin 37, ground 39 
+	"ML": 16, #pin 36, ground 34
+	"FL": 12, #pin 32, ground 30
+	"FR": 25, #pin 22, ground 20
+	"MR": 23, #pin 16, ground 14
+	"BR": 17 #pin 11, ground 9
 }
 
-ESC_US_REVERSE = 1100
-ESC_US_HALT = 1500
-ESC_US_FORWARD = 1900
+THRUSTER_HALT = 1500
+THRUSTER_REVERSE = 1100
+THRUSTER_FORWARD = 1900
+
+#SAVOX_US_MID = 1500
+SAVOX_US_CLOSE = 800
+SAVOX_US_OPEN = 2200
 
 #it takes roughly seven seconds for our ESC's to initialize
 ESC_INIT_DELAY = 7
