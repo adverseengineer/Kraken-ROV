@@ -1,1 +1,7 @@
 inputs and pigpio must be installed under the root user, not pi
+
+our claw servo is a savox SW-0231MG and it is waterproof
+
+this inputs library kinda sucks
+you cannot get button states or axis states from a gamepad object, you must use the event loop approach
+the only purpose for making a gamepad object is to vibrate that specific controller
