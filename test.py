@@ -4,29 +4,34 @@
 import inputs, pigpio
 from config import *
 from util import *
-from gamepad_state import gamepad_state;
 from sys import exc_info
 
-assert len(inputs.devices.gamepads) == 1, "please connect exactly one controller"
-# gamepad = inputs.devices.gamepads[0]
+try:
+	assert len(inputs.devices.gamepads) == 1, "please connect exactly one controller"
+	# gamepad = inputs.devices.gamepads[0]
 
-pi = pigpio.pi()
+	pi = pigpio.pi()
 
-init_pins()
-init_thrusters()
+	init_pins(pi)
+	init_thrusters(pi)
 
-close_requested = False
+	close_requested = False
 
-while not close_requested:
-
-	try:
+	while not close_requested:
 		events = inputs.get_gamepad()
 		for event in events:
-			update_thrusters(pi, event)
+			if event.ev_type == "Sync":
+				continue
+			
 			update_claws(pi, event)
+			if event.ev_type == "Absolute":
+				update_thrusters(pi, event)
 
-	except OSError:
-		print(exc_info())
-		close_requested = True
+except OSError:
+	print(exc_info())
+	close_requested = True
+except KeyboardInterrupt:
+	print("Ctrl+C Caught! Goodbye!")
+	close_requested = True
 
 pi.stop()
