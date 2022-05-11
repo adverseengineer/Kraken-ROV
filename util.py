@@ -15,6 +15,7 @@ def init_pins(pi):
 	pi.set_mode(THRUSTER_BR, pigpio.OUTPUT)
 	pi.set_mode(CLAW_L, pigpio.OUTPUT)
 	pi.set_mode(CLAW_R, pigpio.OUTPUT)
+	print("GPIO Initialized!")
 
 def init_thrusters(pi):
 	pi.set_servo_pulsewidth(THRUSTER_BL, THRUSTER_HALT)
@@ -29,59 +30,52 @@ def init_thrusters(pi):
 def thruster_set_speed(pi, thruster, speed):
 	assert(THRUSTER_REVERSE <= speed <= THRUSTER_FORWARD)
 	pi.set_servo_pulsewidth(thruster, speed)
+	#print(f"setting thruster speed to {speed}")
 
 def claw_set_position(pi, claw, position):
 	assert(CLAW_CLOSE <= position <= CLAW_OPEN)
 	pi.set_servo_pulsewidth(claw, position)
-	print("setting claw position")
+	print(f"setting claw position to {position}")
 
-#takes an absolute event and updates the proper motors
-def update_thrusters(pi, event):
+#rotate the rov about the y axis (yaw)
+def rov_turn(pi, event):
+	# -1 +1
+	# +1 -1
+	#the front right and back left thrusters must spin the opposite direction of the other two
+	val = map(event.state, AXIS_MIN, AXIS_MAX, THRUSTER_REVERSE, THRUSTER_FORWARD)
+	thruster_set_speed(pi, THRUSTER_FR, val)
+	thruster_set_speed(pi, THRUSTER_BL, val)
+	val = map(event.state, AXIS_MIN, AXIS_MAX, THRUSTER_FORWARD, THRUSTER_REVERSE)
+	thruster_set_speed(pi, THRUSTER_FL, val)
+	thruster_set_speed(pi, THRUSTER_BR, val)
 
-	if event.ev_type != "Absolute":
-		return
+#move the rov forward or backward
+def rov_move(pi, event):
+	# +1 +1
+	# -1 -1
+	#the front thrusters must spin the opposite direction of the other two
+	val = map(event.state, AXIS_MAX, AXIS_MIN, THRUSTER_REVERSE, THRUSTER_FORWARD)
+	thruster_set_speed(pi, THRUSTER_FL, val)
+	thruster_set_speed(pi, THRUSTER_FR, val)
+	val = map(event.state, AXIS_MAX, AXIS_MIN, THRUSTER_FORWARD, THRUSTER_REVERSE)
+	thruster_set_speed(pi, THRUSTER_BL, val)
+	thruster_set_speed(pi, THRUSTER_BR, val)
 
-	if event.code == "ABS_X": #rotate cw/ccw
-		val = map(event.state, AXIS_MIN, AXIS_MAX, THRUSTER_REVERSE, THRUSTER_FORWARD)
-		thruster_set_speed(pi, THRUSTER_FL, val)
-		thruster_set_speed(pi, THRUSTER_FR, val)
-		thruster_set_speed(pi, THRUSTER_BL, val)
-		thruster_set_speed(pi, THRUSTER_BR, val)
-	elif event.code == "ABS_Y": #move forward/backward
-		val = map(event.state, AXIS_MAX, AXIS_MIN, THRUSTER_REVERSE, THRUSTER_FORWARD)
-		thruster_set_speed(pi, THRUSTER_FL, val)
-		thruster_set_speed(pi, THRUSTER_FR, val)
-		thruster_set_speed(pi, THRUSTER_BL, val)
-		thruster_set_speed(pi, THRUSTER_BR, val)
-	elif event.code == "ABS_RX": #strafe left/right
-		val = map(event.state, AXIS_MIN, AXIS_MAX, THRUSTER_REVERSE, THRUSTER_FORWARD)
-		thruster_set_speed(pi, THRUSTER_FL, val)
-		thruster_set_speed(pi, THRUSTER_FR, val)
-		thruster_set_speed(pi, THRUSTER_BL, val)
-		thruster_set_speed(pi, THRUSTER_BR, val)
-	elif event.code == "ABS_RY": #surface/dive
-		val = map(event.state, AXIS_MAX, AXIS_MIN, THRUSTER_REVERSE, THRUSTER_FORWARD)
-		thruster_set_speed(pi, THRUSTER_ML, val)
-		thruster_set_speed(pi, THRUSTER_MR, val)
-	else:
-		print(f"Unbound Keypress!: {event.code}")
+#move the rov left or right
+def rov_strafe(pi, event):
+	# +1 -1
+	# +1 -1
+	#the left side thrusters must spin the opposite direction of the other two 
+	val = map(event.state, AXIS_MIN, AXIS_MAX, THRUSTER_REVERSE, THRUSTER_FORWARD)
+	thruster_set_speed(pi, THRUSTER_FL, val)
+	thruster_set_speed(pi, THRUSTER_BR, val)
+	val = map(event.state, AXIS_MIN, AXIS_MAX, THRUSTER_FORWARD, THRUSTER_REVERSE)
+	thruster_set_speed(pi, THRUSTER_FR, val)
+	thruster_set_speed(pi, THRUSTER_BR, val)
 
-#takes an event and uses it to update the claw servos
-def update_claws(pi, event):
-
-	if event.ev_type != "Key" and event.ev_type != "Absolute":
-		return
-
-	if event.code == "BTN_TL": #left claw open
-		claw_set_position(pi, CLAW_L, CLAW_OPEN)
-	elif event.code == "ABS_Z": #left claw close
-		val = map(event.state, TRIGGER_MIN, TRIGGER_MAX, CLAW_OPEN, CLAW_CLOSE)
-		claw_set_position(pi, CLAW_L, val)
-	elif event.code == "BTN_TR": #right claw open
-		claw_set_position(pi, CLAW_R, CLAW_OPEN)
-	elif event.code == "ABS_RZ": #right claw close
-		val = map(event.state, TRIGGER_MIN, TRIGGER_MAX, CLAW_OPEN, CLAW_CLOSE)
-		claw_set_position(pi, CLAW_R, val)
-	else:
-		print(f"Unbound Keypress!: {event.code}")
+#raise or lower the rov
+def rov_updown(pi, event):
+	val = map(event.state, AXIS_MAX, AXIS_MIN, THRUSTER_REVERSE, THRUSTER_FORWARD)
+	thruster_set_speed(pi, THRUSTER_ML, val)
+	thruster_set_speed(pi, THRUSTER_MR, val)
 		
