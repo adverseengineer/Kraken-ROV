@@ -11,11 +11,13 @@
 #include "lights.h"
 
 void setup(void) {
+  pinMode(0, OUTPUT);
+
   delay(Defs::STARTUP_DELAY);
   Serial.begin(115200);
   Serial.println("Initializing... ");
   Control::Init();
-  ESC::Init();
+  Esc::Init();
   Grips::Init();
   Lights::Init();
   Serial.println("Done!");
@@ -24,16 +26,18 @@ void setup(void) {
 void loop(void) {
 
   Control::Update();
-  if(Control::xb.Xbox360Connected) {
-    int lsX = map(Control::JoyL.x, Control::HAT_MIN, Control::HAT_MAX, ESC::REVERSE, ESC::FORWARD);
-    ESC::escFL.writeMicroseconds(lsX);
-    ESC::escFR.writeMicroseconds(lsX);
-    ESC::escBL.writeMicroseconds(lsX);
-    ESC::escBR.writeMicroseconds(lsX);
-    ESC::escVL.writeMicroseconds(lsX);
-    ESC::escVR.writeMicroseconds(lsX);
-  }
-  else {
+  if (Control::IsAvailable()) {
+    // int lsX = map(Control::JoyL.x, Control::HAT_MIN, Control::HAT_MAX, Esc::REVERSE, Esc::FORWARD);
+    // Esc::esc[0].writeMicroseconds(lsX);
+    // Esc::esc[1].writeMicroseconds(lsX);
+    // Esc::esc[2].writeMicroseconds(lsX);
+    // Esc::esc[3].writeMicroseconds(lsX);
+    // Esc::escVL.writeMicroseconds(lsX);
+    // Esc::escVR.writeMicroseconds(lsX);
+
+    Esc::UpdateInputs();
+    Esc::ApplyInputs();
+  } else {
     Serial.println("Couldn't detect a controller. Retrying next tick...");
   }
 
