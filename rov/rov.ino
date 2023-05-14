@@ -14,7 +14,7 @@ void setup(void) {
   pinMode(0, OUTPUT);
 
   delay(Defs::STARTUP_DELAY);
-  Serial.begin(115200);
+  Serial.begin(4800);
   Serial.println("Initializing... ");
   Control::Init();
   Esc::Init();

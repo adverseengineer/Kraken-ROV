@@ -17,8 +17,8 @@ namespace Esc {
   const uint16_t INIT_DELAY = 7000;
 
   //coefficients for inputs to limit the speed of the thrusters so we don't draw too many amps
-  const float MOVE_SPEED = 0.25f;//0.5f;
-  const float TURN_SPEED = 0.25f;//0.3f;
+  const float MOVE_SPEED = 0.35f;//0.5f;
+  const float TURN_SPEED = 0.15f;//0.3f;
   const float VERT_SPEED = 0.5f;//0.5f;
   const float invSqrt2 = 0.7071f;
 
@@ -52,14 +52,14 @@ namespace Esc {
     esc[3].attach(Defs::Pins::BR, REVERSE, FORWARD);
     for (auto i = 0; i < 4; i++)
       esc[i].writeMicroseconds(HALT);
-
+    
     //init the two vertical ones
-    pinMode(Defs::Pins::VL, OUTPUT);
-    pinMode(Defs::Pins::VR, OUTPUT);
-    escVL.attach(Defs::Pins::FL, REVERSE, FORWARD);
-    escVR.attach(Defs::Pins::FR, REVERSE, FORWARD);
-    escVL.writeMicroseconds(HALT);
-    escVR.writeMicroseconds(HALT);
+    // pinMode(Defs::Pins::VL, OUTPUT);
+    // pinMode(Defs::Pins::VR, OUTPUT);
+    // escVL.attach(Defs::Pins::FL, REVERSE, FORWARD);
+    // escVR.attach(Defs::Pins::FR, REVERSE, FORWARD);
+    // escVL.writeMicroseconds(HALT);
+    // escVR.writeMicroseconds(HALT);
 
     delay(INIT_DELAY);
 
@@ -83,24 +83,25 @@ namespace Esc {
     turnInput[2] = -r;
     turnInput[3] = r;
 
-    Serial.println(Control::JoyR.y);
     //we use the vertical axis of the right stick to dive and surface
     vertInput = (int32_t)(Control::JoyR.y * VERT_SPEED);
-    Serial.println(vertInput);
   }
 
   void ApplyInputs(void) noexcept {
+
+    // Serial.print("sigs: { ");
 
     for (auto i = 0; i < 4; i++) {
       combinedInput[i] = moveInput[i] + turnInput[i];
 
       uint16_t sig = map(combinedInput[i], Control::HAT_MIN, Control::HAT_MAX, REVERSE, FORWARD);
       esc[i].writeMicroseconds(sig);
+      // Serial.print(i);
+      // Serial.print(": ");
+      // Serial.print(sig);
+      // Serial.print(", ");
     }
 
     int16_t vertSig = map(vertInput, Control::HAT_MIN, Control::HAT_MAX, REVERSE, FORWARD);
-    escVL.writeMicroseconds(vertSig);
-    escVR.writeMicroseconds(vertSig);
-
   }
 }
