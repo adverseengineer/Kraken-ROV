@@ -54,12 +54,12 @@ namespace Esc {
       esc[i].writeMicroseconds(HALT);
     
     //init the two vertical ones
-    // pinMode(Defs::Pins::VL, OUTPUT);
-    // pinMode(Defs::Pins::VR, OUTPUT);
-    // escVL.attach(Defs::Pins::FL, REVERSE, FORWARD);
-    // escVR.attach(Defs::Pins::FR, REVERSE, FORWARD);
-    // escVL.writeMicroseconds(HALT);
-    // escVR.writeMicroseconds(HALT);
+    pinMode(Defs::Pins::VL, OUTPUT);
+    pinMode(Defs::Pins::VR, OUTPUT);
+    escVL.attach(Defs::Pins::VL, REVERSE, FORWARD);
+    escVR.attach(Defs::Pins::VR, REVERSE, FORWARD);
+    escVL.writeMicroseconds(HALT);
+    escVR.writeMicroseconds(HALT);
 
     delay(INIT_DELAY);
 
@@ -103,5 +103,7 @@ namespace Esc {
     }
 
     int16_t vertSig = map(vertInput, Control::HAT_MIN, Control::HAT_MAX, REVERSE, FORWARD);
+    escVL.writeMicroseconds(vertSig);
+    escVR.writeMicroseconds(vertSig);
   }
 }
