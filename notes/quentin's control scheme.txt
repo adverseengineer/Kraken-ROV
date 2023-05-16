@@ -1,8 +1,0 @@
-l stick y = forward/backward
-l stick x = rotate cw/ccw
-
-r stick x = strafe
-r stick y = dive/surface
-
-lb/rb = horz claw
-lt/rt = vert claw

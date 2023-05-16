@@ -5,6 +5,7 @@
 namespace Grips {
 
   void Init(void) noexcept;
+  void Update(void) noexcept;
 }
 
 #endif

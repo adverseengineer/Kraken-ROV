@@ -11,8 +11,6 @@
 #include "lights.h"
 
 void setup(void) {
-  pinMode(0, OUTPUT);
-
   delay(Defs::STARTUP_DELAY);
   Serial.begin(4800);
   Serial.println("Initializing... ");
@@ -23,23 +21,22 @@ void setup(void) {
   Serial.println("Done!");
 }
 
+int ticks = 0;
+
 void loop(void) {
 
   Control::Update();
   if (Control::IsAvailable()) {
-    // int lsX = map(Control::JoyL.x, Control::HAT_MIN, Control::HAT_MAX, Esc::REVERSE, Esc::FORWARD);
-    // Esc::esc[0].writeMicroseconds(lsX);
-    // Esc::esc[1].writeMicroseconds(lsX);
-    // Esc::esc[2].writeMicroseconds(lsX);
-    // Esc::esc[3].writeMicroseconds(lsX);
-    // Esc::escVL.writeMicroseconds(lsX);
-    // Esc::escVR.writeMicroseconds(lsX);
 
     Esc::UpdateInputs();
     Esc::ApplyInputs();
+
+    Grips::Update();
+
   } else {
-    Serial.println("Couldn't detect a controller. Retrying next tick...");
+    Serial.print("."); //"Couldn't detect a controller, retrying next tick.."
   }
 
   delay(Defs::TICK_DELAY);
 }
+ 
