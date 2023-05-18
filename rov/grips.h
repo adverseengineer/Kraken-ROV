@@ -1,3 +1,5 @@
+//Nick Sells, 2023
+//ETSU Underwater Robotics
 
 #ifndef GRIPS_H
 #define GRIPS_H

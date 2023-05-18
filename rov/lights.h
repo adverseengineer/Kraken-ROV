@@ -1,3 +1,5 @@
+//Nick Sells, 2023
+//ETSU Underwater Robotics
 
 #ifndef LIGHTS_H
 #define LIGHTS_H

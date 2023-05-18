@@ -3,15 +3,18 @@
 
 #include <Servo.h>
 
-#include "defs.h"
-
 #include "control.h"
 #include "esc.h"
 #include "grips.h"
 #include "lights.h"
 
+//how many ms to wait before setup to avoid the glitch where setup is called twice
+const uint8_t STARTUP_DELAY = 90;
+//how many ms to wait between each tick
+const uint8_t TICK_DELAY = 17;
+
 void setup(void) {
-  delay(Defs::STARTUP_DELAY);
+  delay(STARTUP_DELAY);
   Serial.begin(4800);
   Serial.println("Initializing... ");
   Control::Init();
@@ -34,7 +37,7 @@ void loop(void) {
     Serial.print("."); //"Couldn't detect a controller, retrying next tick.."
   }
 
-  delay(Defs::TICK_DELAY);
+  delay(TICK_DELAY);
 }
 
  

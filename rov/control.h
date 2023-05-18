@@ -1,3 +1,5 @@
+//Nick Sells, 2023
+//ETSU Underwater Robotics
 
 #ifndef CONTROL_H
 #define CONTROL_H

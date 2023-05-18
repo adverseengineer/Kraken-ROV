@@ -1,3 +1,5 @@
+//Nick Sells, 2023
+//ETSU Underwater Robotics
 
 #ifndef UTIL_H
 #define UTIL_H

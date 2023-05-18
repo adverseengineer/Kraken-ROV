@@ -1,19 +1,20 @@
+//Nick Sells, 2023
+//ETSU Underwater Robotics
 
 #include <Arduino.h>
 #include <Servo.h>
 
-#include <FixedPoints.h>
-#include <FixedPointsCommon.h>
-
 #include "esc.h"
+
 #include "control.h"
 #include "util.h"
-#include "defs.h"
 
 //TODO: get an accelerometer inside the capsule to use to tell when we are tipping
 //this will allow us to potentially use any of the six thrusters to right ourselves, rather than just the verticals
 
 namespace Esc {
+
+  const uint8_t PINS[6] = {2, 3, 4, 5, 6, 7};
 
   //pulse widths to lerp between to communicate with our ESCs
   const uint16_t HALT = 1500;
@@ -29,20 +30,18 @@ namespace Esc {
   const float TURN_SPEED = 0.4;
   const float VERT_SPEED = 0.5;
   
-  //servo objects to control each ESC
   Servo esc[6];
-
-  int16_t input[5];
-  int16_t oldInput[5];
+  int16_t input[6];
+  int16_t oldInput[6];
 
   //initialize our ESCs
-  //TODO: establish two-way communication with our ESCs so we can do this more elegantly
+  //TODO: establish two-way communication so we can do this more elegantly
   void Init(void) noexcept {
     Serial.print("Initializing ESCs... ");
 
-    for (auto i = 0; i < 6; i++) {
-      pinMode(Defs::PINS[i], OUTPUT);
-      esc[i].attach(Defs::PINS[i], REVERSE, FORWARD);
+    for(auto i = 0; i < 6; i++) {
+      pinMode(PINS[i], OUTPUT);
+      esc[i].attach(PINS[i], REVERSE, FORWARD);
       esc[i].writeMicroseconds(HALT);
     }
 
@@ -55,17 +54,17 @@ namespace Esc {
 
     //we track the old and new inputs so that we can check if the sign changed
     //if it did, we write HALT to an ESC for an instant before continuing
-    for(auto i = 0; i < 5; i++) {
+    for(auto i = 0; i < 6; i++) {
       oldInput[i] = input[i];
       input[i] = 0;
     }
 
     //check for the up/down overrides
     //if we are holding up or down on the d-pad, give them full power and prevent any other thrusters from getting power
-    if (Control::GetButtonHeld(UP))
-      input[4] = Control::HAT_MAX;
-    else if (Control::GetButtonHeld(DOWN))
-      input[4] = Control::HAT_MIN;
+    if(Control::GetButtonHeld(UP))
+      input[4] = input[5] = Control::HAT_MAX;
+    else if(Control::GetButtonHeld(DOWN))
+      input[4] = input[5] = Control::HAT_MIN;
     
     //if neither of the overrides is being used, allow for other inputs
     else {
@@ -90,7 +89,7 @@ namespace Esc {
       input[3] += r;
 
       //we use the vertical axis of the right stick to dive and surface
-      input[4] = (int16_t)(Control::GetHat(RightHatY) * VERT_SPEED);
+      input[4] = input[5] = (int16_t)(Control::GetHat(RightHatY) * VERT_SPEED);
     }
 
     //NOTE: these neg ones are temporary until i can get quintin to swap the wires
@@ -100,9 +99,9 @@ namespace Esc {
     // input[2] *= -1;
     // input[3] *= -1;
     input[4] *= -1;
+    input[5] *= -1;
 
-    //for each of the lateral thrusters,
-    for(auto i = 0; i < 4; i++) {
+    for(auto i = 0; i < 6; i++) {
       
       //if the sign has changed, write a halt signal for an instant first
       if(Util::sgn(input[i]) != Util::sgn(oldInput[i]))
@@ -111,10 +110,5 @@ namespace Esc {
       uint16_t sig = map(input[i], Control::HAT_MIN, Control::HAT_MAX, REVERSE, FORWARD);
       esc[i].writeMicroseconds(sig);
     }
-
-    //for both of the vertical thrusters
-    int16_t sig = map(input[4], Control::HAT_MIN, Control::HAT_MAX, REVERSE, FORWARD);
-    esc[4].writeMicroseconds(sig);
-    esc[5].writeMicroseconds(sig);
   }
 }
