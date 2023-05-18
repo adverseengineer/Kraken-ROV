@@ -104,8 +104,8 @@ namespace Esc {
     for(auto i = 0; i < 4; i++) {
       
       //if the sign has changed, write a halt signal for an instant first
-      // if(Util::sgn(input[i]) != Util::sgn(oldInput[i]))
-      //   esc[i].writeMicroseconds(HALT);
+      if(Util::sgn(input[i]) != Util::sgn(oldInput[i]))
+        esc[i].writeMicroseconds(HALT);
 
       uint16_t sig = map(input[i], Control::HAT_MIN, Control::HAT_MAX, REVERSE, FORWARD);
       esc[i].writeMicroseconds(sig);
