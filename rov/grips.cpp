@@ -9,7 +9,7 @@
 namespace Grips {
 
   const uint16_t OPEN = 1900;
-  const uint16_t CLOSED = 1100;
+  const uint16_t CLOSED = 1200;
 
   const uint16_t OPEN_SPEED = 12;
   const uint16_t CLOSE_SPEED = 12;
@@ -30,6 +30,7 @@ namespace Grips {
     gripR.attach(Defs::Pins::GRIPR, CLOSED, OPEN);
     gripL.writeMicroseconds(gripPosL);
     gripR.writeMicroseconds(gripPosR);
+
     Serial.println("Grippers Initialized!");
   }
 
@@ -43,7 +44,7 @@ namespace Grips {
       }
     }
     //if the left bumper is held, but the grip is not yet fully open
-    if(Control::GetButtonHeld(LB)) {
+    else if(Control::GetButtonHeld(LB)) {
       if(gripPosL < OPEN) {
         gripPosL += OPEN_SPEED;
         gripL.writeMicroseconds(gripPosL);
@@ -57,7 +58,7 @@ namespace Grips {
         gripR.writeMicroseconds(gripPosR);
       }
     }
-    if(Control::GetButtonHeld(RB)) {
+    else if(Control::GetButtonHeld(RB)) {
       if(gripPosR < OPEN) {
         gripPosR += OPEN_SPEED;
         gripR.writeMicroseconds(gripPosR);
