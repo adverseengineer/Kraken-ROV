@@ -77,8 +77,8 @@ namespace Esc {
     
     //the diagonal pairs are 0,3 and 1,2
     //members of these pairs will always have the same multiplier but opposite sign
-    int32_t diag03 = c + s;
-    int32_t diag12 = -c + s;
+    int32_t diag03 = -c + s;
+    int32_t diag12 = c + s;
     input[0] += diag03;
     input[1] += diag12;
     input[2] -= diag12;
