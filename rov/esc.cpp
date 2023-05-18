@@ -24,16 +24,16 @@ namespace Esc {
   const uint16_t INIT_DELAY = 7000;
 
   //coefficients for inputs to limit the speed of the thrusters so we don't draw too many amps
-  constexpr float invSqrt2 = 0.7071;
-  constexpr float MOVE_SPEED = 0.6 * invSqrt2;
-  constexpr float TURN_SPEED = 0.4;
-  constexpr float VERT_SPEED = 0.5;
+  const float invSqrt2 = 0.7071068;
+  const float MOVE_SPEED = 0.6 * invSqrt2;
+  const float TURN_SPEED = 0.4;
+  const float VERT_SPEED = 0.5;
   
   //servo objects to control each ESC
   Servo esc[6];
 
-  int32_t input[5];
-  int32_t oldInput[5];
+  int16_t input[5];
+  int16_t oldInput[5];
 
   //initialize our ESCs
   //TODO: establish two-way communication with our ESCs so we can do this more elegantly
@@ -70,27 +70,27 @@ namespace Esc {
     //if neither of the overrides is being used, allow for other inputs
     else {
       //we use the left stick to indicate which way we want to go and how fast
-      int32_t c = (int32_t)(Control::GetHat(LeftHatX) * MOVE_SPEED);
-      int32_t s = (int32_t)(Control::GetHat(LeftHatY) * MOVE_SPEED);
-      
+      int16_t c = (int16_t)(Control::GetHat(LeftHatX) * MOVE_SPEED);
+      int16_t s = (int16_t)(Control::GetHat(LeftHatY) * MOVE_SPEED);
+
       //the diagonal pairs are 0,3 and 1,2
       //members of these pairs will always have the same multiplier but opposite sign
-      int32_t diag03 = -c + s;
-      int32_t diag12 = c + s;
+      int16_t diag03 = -c + s;
+      int16_t diag12 = c + s;
       input[0] += diag03;
       input[1] += diag12;
       input[2] -= diag12;
       input[3] -= diag03;
 
       //we use the horizontal axis of the right stick to indicate which direction to turn and how fast 
-      int32_t r = (int32_t)(Control::GetHat(RightHatX) * TURN_SPEED);
+      int16_t r = (int16_t)(Control::GetHat(RightHatX) * TURN_SPEED);
       input[0] += r;
       input[1] -= r;
       input[2] -= r;
       input[3] += r;
 
       //we use the vertical axis of the right stick to dive and surface
-      input[4] = (int32_t)(Control::GetHat(RightHatY) * VERT_SPEED);
+      input[4] = (int16_t)(Control::GetHat(RightHatY) * VERT_SPEED);
     }
 
     //NOTE: these neg ones are temporary until i can get quintin to swap the wires
