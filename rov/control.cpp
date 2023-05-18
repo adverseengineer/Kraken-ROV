@@ -45,7 +45,11 @@ namespace Control {
     return xb.getButtonPress(btn);
   }
 
-  int32_t GetHat(AnalogHatEnum hat) noexcept {
-    return xb.getAnalogHat(hat);
+  int16_t GetHat(AnalogHatEnum hat) noexcept {
+    auto val = xb.getAnalogHat(hat);
+    if((DEADZONE < val) || (val < -DEADZONE))
+      return val;
+    else
+      return 0;
   }
 }

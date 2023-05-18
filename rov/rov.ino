@@ -1,5 +1,5 @@
 //Nick Sells, 2023
-//ETSU Underwater Robotics ROV Controller
+//ETSU Underwater Robotics
 
 #include <Servo.h>
 

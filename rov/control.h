@@ -12,8 +12,10 @@
 
 namespace Control {
 
-  const int32_t HAT_MIN = -65536;
-  const int32_t HAT_MAX = 65535;
+  const int16_t DEADZONE = 6553; //0.2
+
+  const int16_t HAT_MIN = -32768;
+  const int16_t HAT_MAX = 32767;
 
   const uint8_t TRIG_MIN = 0;
   const uint8_t TRIG_MAX = 255;
@@ -24,7 +26,7 @@ namespace Control {
 
   extern uint8_t GetButtonHit(ButtonEnum btn) noexcept;
   extern uint8_t GetButtonHeld(ButtonEnum btn) noexcept;
-  extern int32_t GetHat(AnalogHatEnum hat) noexcept;
+  extern int16_t GetHat(AnalogHatEnum hat) noexcept;
 }
 
 #endif
