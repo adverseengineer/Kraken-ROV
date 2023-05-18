@@ -1,0 +1,4 @@
+may need a hub for more power in the middle of the line
+may need to lower the tickrate
+may need to up the tickrate
+may need to revert fixed to floats

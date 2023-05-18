@@ -62,43 +62,44 @@ namespace Esc {
 
     //check for the up/down overrides
     //if we are holding up or down on the d-pad, give them full power and prevent any other thrusters from getting power
-    if (Control::GetButtonHeld(UP)) {
+    if (Control::GetButtonHeld(UP))
       input[4] = Control::HAT_MAX;
-      return;
-    }
-    else if (Control::GetButtonHeld(DOWN)) {
+    else if (Control::GetButtonHeld(DOWN))
       input[4] = Control::HAT_MIN;
-      return;
+    
+    //if neither of the overrides is being used, allow for other inputs
+    else {
+      //we use the left stick to indicate which way we want to go and how fast
+      int32_t c = (int32_t)(Control::GetHat(LeftHatX) * MOVE_SPEED);
+      int32_t s = (int32_t)(Control::GetHat(LeftHatY) * MOVE_SPEED);
+      
+      //the diagonal pairs are 0,3 and 1,2
+      //members of these pairs will always have the same multiplier but opposite sign
+      int32_t diag03 = -c + s;
+      int32_t diag12 = c + s;
+      input[0] += diag03;
+      input[1] += diag12;
+      input[2] -= diag12;
+      input[3] -= diag03;
+
+      //we use the horizontal axis of the right stick to indicate which direction to turn and how fast 
+      int32_t r = (int32_t)(Control::GetHat(RightHatX) * TURN_SPEED);
+      input[0] += r;
+      input[1] -= r;
+      input[2] -= r;
+      input[3] += r;
+
+      //we use the vertical axis of the right stick to dive and surface
+      input[4] = (int32_t)(Control::GetHat(RightHatY) * VERT_SPEED);
     }
 
-    //we use the left stick to indicate which way we want to go and how fast
-    int32_t c = (int32_t)(Control::GetHat(LeftHatX) * MOVE_SPEED);
-    int32_t s = (int32_t)(Control::GetHat(LeftHatY) * MOVE_SPEED);
-    
-    //the diagonal pairs are 0,3 and 1,2
-    //members of these pairs will always have the same multiplier but opposite sign
-    int32_t diag03 = -c + s;
-    int32_t diag12 = c + s;
-    input[0] += diag03;
-    input[1] += diag12;
-    input[2] -= diag12;
-    input[3] -= diag03;
-
-    //we use the horizontal axis of the right stick to indicate which direction to turn and how fast 
-    int32_t r = (int32_t)(Control::GetHat(RightHatX) * TURN_SPEED);
-    input[0] += r;
-    input[1] -= r;
-    input[2] -= r;
-    input[3] += r;
-
-    //we use the vertical axis of the right stick to dive and surface
-    input[4] = (int32_t)(Control::GetHat(RightHatY) * VERT_SPEED) * -1;
-
+    //NOTE: these neg ones are temporary until i can get quintin to swap the wires
+    //the thrusters are 3-phase brushless motors, so swapping any two of the three wires will reverse the motor
     input[0] *= -1;
     // input[1] *= -1;
     // input[2] *= -1;
     // input[3] *= -1;
-    // input[4] *= -1;
+    input[4] *= -1;
 
     //for each of the lateral thrusters,
     for(auto i = 0; i < 4; i++) {
@@ -111,6 +112,7 @@ namespace Esc {
       esc[i].writeMicroseconds(sig);
     }
 
+    //for both of the vertical thrusters
     int16_t sig = map(input[4], Control::HAT_MIN, Control::HAT_MAX, REVERSE, FORWARD);
     esc[4].writeMicroseconds(sig);
     esc[5].writeMicroseconds(sig);
