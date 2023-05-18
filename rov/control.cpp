@@ -6,7 +6,12 @@
 namespace Control {
 
   USB usb;
+  
+  #ifdef USE360
   XBOXUSB xb(&usb);
+  #else
+  XBOXONE xb(&usb);
+  #endif
 
   //initialize our USB library
   //NOTE: if it fails to start, we halt by entering into an infinite loop
@@ -16,9 +21,7 @@ namespace Control {
       Serial.println("Failed to initialize USB. Halt.");
       while(true);
     }
-    xb.setLedMode(LEDModeEnum::ROTATING);
     Serial.println("USB Initialized!");
-    //while(!xb.Xbox360Connected);
   }
 
   //update the state of the xbox controller 
@@ -27,7 +30,11 @@ namespace Control {
   }
 
   bool IsAvailable(void) noexcept {
+    #ifdef USE360
     return xb.Xbox360Connected;
+    #else
+    return xb.XboxOneConnected;
+    #endif
   }
 
   uint8_t GetButtonHit(ButtonEnum btn) noexcept {

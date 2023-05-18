@@ -11,8 +11,8 @@ namespace Grips {
   const uint16_t OPEN = 1900;
   const uint16_t CLOSED = 1100;
 
-  const uint16_t OPEN_SPEED = 8;
-  const uint16_t CLOSE_SPEED = 8;
+  const uint16_t OPEN_SPEED = 12;
+  const uint16_t CLOSE_SPEED = 12;
 
   Servo gripL;
   Servo gripR;

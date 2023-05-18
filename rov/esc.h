@@ -5,8 +5,7 @@
 namespace Esc {
 
   extern void Init(void) noexcept;
-  extern void UpdateInputs(void) noexcept;
-  extern void ApplyInputs(void) noexcept;
+  extern void Update(void) noexcept;
 }
 
 #endif

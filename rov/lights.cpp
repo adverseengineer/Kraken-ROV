@@ -2,6 +2,7 @@
 #include <Arduino.h>
 
 #include "lights.h"
+#include "control.h"
 #include "defs.h"
 
 namespace Lights {
@@ -18,12 +19,6 @@ namespace Lights {
     Serial.println("Lights Initialized!");
   }
 
-  void Toggle(void) noexcept {
-    lit = !lit;
-    digitalWrite(Defs::Pins::LIGHTL, lit);
-    digitalWrite(Defs::Pins::LIGHTR, lit);
-  }
-
   void On(void) noexcept {
     lit = true;
     digitalWrite(Defs::Pins::LIGHTL, lit);
@@ -34,5 +29,12 @@ namespace Lights {
     lit = false;
     digitalWrite(Defs::Pins::LIGHTL, lit);
     digitalWrite(Defs::Pins::LIGHTR, lit);
+  }
+
+  void Update(void) noexcept {
+    if(Control::GetButtonHit(A)) {
+      if(!lit) On();
+      else Off();
+    }
   }
 }

@@ -12,6 +12,7 @@ namespace Defs {
   //TODO: edit these as the rov is wired
   const uint8_t PINS[] = {2, 3, 4, 5, 6, 7, 8, 9, 0, 0};
 
+  // union PinUnion
   namespace Pins {
     const uint8_t FL = PINS[0];
     const uint8_t FR = PINS[1];

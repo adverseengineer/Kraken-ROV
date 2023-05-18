@@ -2,7 +2,13 @@
 #ifndef CONTROL_H
 #define CONTROL_H
 
+#define USE360
+
+#ifdef USE360
 #include <XBOXUSB.h>
+#else
+#include <XBOXONE.h>
+#endif
 
 namespace Control {
 

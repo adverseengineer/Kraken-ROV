@@ -21,17 +21,14 @@ void setup(void) {
   Serial.println("Done!");
 }
 
-int ticks = 0;
-
 void loop(void) {
 
   Control::Update();
   if (Control::IsAvailable()) {
 
-    Esc::UpdateInputs();
-    Esc::ApplyInputs();
-
+    Esc::Update();
     Grips::Update();
+    Lights::Update();
 
   } else {
     Serial.print("."); //"Couldn't detect a controller, retrying next tick.."
