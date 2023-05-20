@@ -1,55 +1,56 @@
 //Nick Sells, 2023
 //ETSU Underwater Robotics
 
-#include <SPI.h>
-
 #include "control.h"
+#include "util.h"
 
 namespace Control {
 
   USB usb;
-  
+
   #ifdef USE360
-  XBOXUSB xb(&usb);
+  XBOXUSB gamepad(&usb);
   #else
-  XBOXONE xb(&usb);
+  XBOXONE gamepad(&usb);
   #endif
 
-  //initialize our USB library
-  //NOTE: if it fails to start, we halt by entering into an infinite loop
+  //initialize our input system
   void Init(void) noexcept {
-    Serial.print("Initializing USB... ");
-    if(usb.Init() == -1) {
-      Serial.println("Failed to initialize USB. Halt.");
-      while(true);
-    }
-    Serial.println("USB Initialized!");
+
+    Serial.print(F("\nInitializing USB... "));
+    Util::Assert(usb.Init() == -1, F("Failed to initialize USB"));
+    Serial.println(F("USB Initialized!"));
   }
 
-  //update the state of the xbox controller 
+  //update the state of our input system 
   void Update(void) noexcept {
     usb.Task();
   }
 
+  //returns true if a controller is connected and responsive
   bool IsAvailable(void) noexcept {
     #ifdef USE360
-    return xb.Xbox360Connected;
+    return gamepad.Xbox360Connected;
     #else
-    return xb.XboxOneConnected;
+    return gamepad.XboxOneConnected;
     #endif
   }
 
+  //tells whether or not the given button has been pressed since last tick
   uint8_t GetButtonHit(ButtonEnum btn) noexcept {
-    return xb.getButtonClick(btn);
+    return gamepad.getButtonClick(btn);
   }
 
+  //tells whether or not the given button is pressed right now
+  //in the case of triggers, it returns the strength of the pull
   uint8_t GetButtonHeld(ButtonEnum btn) noexcept {
-    return xb.getButtonPress(btn);
+    return gamepad.getButtonPress(btn);
   }
 
+  //returns the value reported by the given analog axis
   int16_t GetHat(AnalogHatEnum hat) noexcept {
-    auto val = xb.getAnalogHat(hat);
-    if((DEADZONE < val) || (val < -DEADZONE))
+    auto val = gamepad.getAnalogHat(hat);
+    if((DEADZONE < val) || (DEADZONE < -val))
       return val;
     else
       return 0;

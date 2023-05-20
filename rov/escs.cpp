@@ -4,15 +4,14 @@
 #include <Arduino.h>
 #include <Servo.h>
 
-#include "esc.h"
-
+#include "escs.h"
 #include "control.h"
 #include "util.h"
 
 //TODO: get an accelerometer inside the capsule to use to tell when we are tipping
 //this will allow us to potentially use any of the six thrusters to right ourselves, rather than just the verticals
 
-namespace Esc {
+namespace ESCs {
 
   const uint8_t PINS[6] = {2, 3, 4, 5, 6, 7};
 
@@ -50,6 +49,7 @@ namespace Esc {
     Serial.println("ESCs Initialized!");
   }
 
+  //update the state of our ESCs
   void Update(void) noexcept {
 
     //we track the old and new inputs so that we can check if the sign changed
@@ -65,6 +65,10 @@ namespace Esc {
       input[4] = input[5] = Control::HAT_MAX;
     else if(Control::GetButtonHeld(DOWN))
       input[4] = input[5] = Control::HAT_MIN;
+    else if(Control::GetButtonHeld(LEFT))
+      //TODO:
+    else if(Control::GetButtonHeld(RIGHT))
+      //TODO:
     
     //if neither of the overrides is being used, allow for other inputs
     else {

@@ -1,10 +1,10 @@
 //Nick Sells, 2023
 //ETSU Underwater Robotics
 
-#ifndef ESC_H
-#define ESC_H
+#ifndef ESCS_H
+#define ESCS_H
 
-namespace Esc {
+namespace ESCs {
 
   extern void Init(void) noexcept;
   extern void Update(void) noexcept;

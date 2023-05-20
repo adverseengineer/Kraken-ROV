@@ -12,7 +12,7 @@ namespace Grips {
   const uint8_t PINS[2] = {8, 9};
 
   const uint16_t OPEN = 1900;
-  const uint16_t CLOSED = 1200;
+  const uint16_t CLOSED = 1200; //
 
   const uint16_t OPEN_SPEED = 12;
   const uint16_t CLOSE_SPEED = 12;
@@ -33,6 +33,7 @@ namespace Grips {
     
     Serial.println("Grippers Initialized!");
   }
+
 
   void Update(void) noexcept {
 
