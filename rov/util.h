@@ -4,13 +4,15 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#include <WString.h> //for __FlashStringHelper
+#include <WString.h> //for __FlashStringHelper and F()
+
+#define likely(x) __builtin_expect((x), 1)
+#define unlikely(x) __builtin_expect((x), 0)
 
 namespace Util {
 
-  template <typename T> extern void Assert(T cond, const __FlashStringHelper* msg) noexcept;  
-  template <typename T> extern int8_t sgn(T val) noexcept;
-
+  extern void Assert(bool cond, const __FlashStringHelper* msg) noexcept;  
+  extern int8_t Sign(int val) noexcept;
 }
 
 #endif
