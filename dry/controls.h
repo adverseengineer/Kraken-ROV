@@ -9,8 +9,9 @@
 
 namespace Controls {
 
-  static const uint8_t ANALOG_MIN = 0;
-  static const uint8_t ANALOG_MAX = 255;
+  static const int16_t ANALOG_OFFSET = 128;
+  static const int8_t ANALOG_MIN = -128;
+  static const int8_t ANALOG_MAX = 127;
 
   extern void Init(void) noexcept;
   extern void Update(void) noexcept;

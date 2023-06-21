@@ -26,12 +26,16 @@ const static uint16_t ESC_FORWARD = 1900;
 const static uint16_t INIT_DELAY = 7000;
 
 //coefficients for inputs to limit the speed of the thrusters so we don't draw too many amps
-const static float MOVE_SPEED = 0.6;
-const static float TURN_SPEED = 0.4;
-const static float VERT_SPEED = 0.5;
+static constexpr float MOVE_SPEED = 0.6;
+static constexpr float TURN_SPEED = 0.4;
+static constexpr float VERT_SPEED = 0.5;
 
 static uint8_t input[6];
-static uint16_t sigs[8];
+static uint16_t sigs[8] = {ESC_HALT, ESC_HALT, ESC_HALT, ESC_HALT, ESC_HALT, ESC_HALT, GRIP_OPEN, GRIP_OPEN};
+
+static_assert(MOVE_SPEED <= 1);
+static_assert(TURN_SPEED <= 1);
+static_assert(VERT_SPEED <= 1);
 
 namespace ESCs {
 
@@ -50,31 +54,35 @@ namespace ESCs {
     //if neither of the overrides is being used, allow for other inputs
     else {
 
+      //get our input axes in the range -128(inclusive) 127(inclusive)
+      int8_t lx = Controls::Analog(PSS_LX) - Controls::ANALOG_OFFSET;
+      int8_t ly = Controls::Analog(PSS_LY) - Controls::ANALOG_OFFSET;
+      int8_t rx = Controls::Analog(PSS_RX) - Controls::ANALOG_OFFSET;
+      int8_t ry = Controls::Analog(PSS_RY) - Controls::ANALOG_OFFSET;
+
       //we use the left stick to indicate which way we want to go and how fast
-      //8 bits is still enough for these because the multipliers will always be <=1
-      uint8_t x = Controls::Analog(PSS_LX);
-      uint8_t y = Controls::Analog(PSS_LY);
-      float mult = MOVE_SPEED / sqrt(2*(x*x+y*y));
-      uint8_t horz = (uint8_t)(x * mult);
-      uint8_t vert = (uint8_t)(y * mult);
+      //this multiplier will always be less than or equal to one
+      float mult = MOVE_SPEED / sqrt(2*(lx*lx+ly*ly));
+      int8_t horz = (int8_t)(lx * mult);
+      int8_t vert = (int8_t)(ly * mult);
 
       //the diagonal pairs that share a multiplier are 0,3 and 1,2. they do however have opposite signs
-      uint8_t diag03 = -horz + vert;
-      uint8_t diag12 = horz + vert;
+      int8_t diag03 = -horz + vert;
+      int8_t diag12 = horz + vert;
       input[0] += diag03;
       input[1] += diag12;
       input[2] -= diag12;
       input[3] -= diag03;
 
       //we use the horizontal axis of the right stick to indicate which direction to turn and how fast 
-      int8_t r = (int8_t)(Controls::Analog(PSS_RX) * TURN_SPEED);
-      input[0] += r;
-      input[1] -= r;
-      input[2] -= r;
-      input[3] += r;
+      int8_t rot = (int8_t)(rx * TURN_SPEED);
+      input[0] += rot;
+      input[1] -= rot;
+      input[2] -= rot;
+      input[3] += rot;
 
       //we use the vertical axis of the right stick to dive and surface
-      input[4] = input[5] = (int8_t)(Controls::Analog(PSS_RY) * VERT_SPEED);
+      input[4] = input[5] = (int8_t)(ry * VERT_SPEED);
     }
 
     //NOTE: these neg ones are temporary until i can get quintin to swap the wires
