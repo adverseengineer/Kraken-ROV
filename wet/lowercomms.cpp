@@ -15,9 +15,9 @@ static const IPAddress dns(0,0,0,0);
 static const int port = 4080;
 static EthernetServer server(port);
 
-static DataChunk chunk;
-static char* buffer = reinterpret_cast<char*>(&chunk);
-static const size_t DATA_LEN = sizeof(typeof(chunk));
+static uint16_t sigs[8];
+static char* buffer = reinterpret_cast<char*>(&sigs);
+static const size_t DATA_LEN = 16;
 
 void LowerComms::Init(void) noexcept {
 
@@ -39,9 +39,22 @@ void LowerComms::Update(void) noexcept {
       if(recv == -1) break;
       buffer[i] = recv;
     }
-    chunk.Print();
-
+    PrintSignals();
   }
   else
-    Serial.println("No client detected");
+    Serial.println("No client connected");
+}
+
+void LowerComms::GiveSignals(uint16_t* sigs_) noexcept {
+  for(size_t i = 0; i < 8; i++)
+    sigs_[i] = sigs[i];
+}
+
+void LowerComms::PrintSignals(void) noexcept {
+  Serial.print("{ ");
+  for(size_t i = 0; i < 8; i++) {
+    Serial.print(sigs[i]);
+    Serial.print(' ');
+  }
+  Serial.println('}');
 }

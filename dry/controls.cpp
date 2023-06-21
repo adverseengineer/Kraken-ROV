@@ -72,3 +72,16 @@ void Controls::Update(void) noexcept {
   //reads the gamepad state and sets the left motor to spin at 'rumbleStrength' speed
   controller.read_gamepad(false, rumbleStrength);
 }
+
+bool Controls::ButtonHeld(unsigned int button) noexcept {
+  return controller.Button(button);
+}
+bool Controls::ButtonPressed(unsigned int button) noexcept {
+  return controller.ButtonPressed(button);
+}
+bool Controls::ButtonReleased(unsigned int button) noexcept {
+  return controller.ButtonReleased(button);
+}
+uint8_t Controls::Analog(uint8_t axis) noexcept {
+  return controller.Analog(axis);
+}

@@ -3,7 +3,10 @@
 
 #include <Servo.h>
 
+#include "controls.h"
+#include "motors.h"
 #include "uppercomms.h"
+
 
 //how many ms to wait before setup to avoid the glitch where setup is called twice 
 const int STARTUP_DELAY = 300;
@@ -18,11 +21,14 @@ void setup(void) {
   Serial.println("Dry/Upper Arduino");
 
   UpperComms::Init();
+  Controls::Init();
 }
 
 void loop(void) {
 
   UpperComms::Update();
+  Controls::Update();
+  Motors::Update();
   delay(TICK_DELAY);
 }
  

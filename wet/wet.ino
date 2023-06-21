@@ -4,6 +4,7 @@
 #include <PS2X_lib.h>
 
 #include "lowercomms.h"
+#include "motors.h"
 
 const int STARTUP_DELAY = 300;
 const int TICK_DELAY = 1;
@@ -15,10 +16,12 @@ void setup(void) noexcept {
   Serial.println("Wet/Lower Arduino");
   
   LowerComms::Init();
+  Motors::Init();
 }
 
 void loop(void) noexcept {
 
   LowerComms::Update();
+  Motors::Update();
   delay(TICK_DELAY);
 }
