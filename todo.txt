@@ -1,4 +1,0 @@
-implement i2C 2-way communication b/w esc and arduino
-https://github.com/bluerobotics/Arduino_I2C_ESC/blob/master/examples/Basic_I2C_ESC/Basic_I2C_ESC.ino
-
-
