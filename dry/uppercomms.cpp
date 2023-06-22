@@ -34,13 +34,19 @@ void UpperComms::Init(void) noexcept {
 
 void UpperComms::Update(void) noexcept {
 
+  Serial.print("{ ");
+  for(size_t i = 0; i < 8; i++) {
+    Serial.print(sigs[i]);
+    Serial.print(' ');
+  }
+  Serial.println('}');
+
   //if our ethernet connection is still open
   if(client.connected()) {
     
     client.write(buffer, DATA_LEN);
     client.flush();
-
-    Serial.println(F("Still Good!"));
+    
   }
   else {
     //attempt to reconnect every tick until we are reconnected

@@ -14,16 +14,16 @@ const static uint16_t GRIP_OPEN = 1900;
 const static uint16_t GRIP_CLOSED = 1200;
 
 //amounts to increment the grip servo positions by
-const static uint16_t GRIP_OPEN_SPEED = 14;
-const static uint16_t GRIP_CLOSE_SPEED = 14;
+static constexpr uint16_t GRIP_OPEN_SPEED = 14;
+static constexpr uint16_t GRIP_CLOSE_SPEED = 14;
 
 //pulse widths to lerp between to communicate with our ESCs
-const static uint16_t ESC_HALT = 1500;
-const static uint16_t ESC_REVERSE = 1100;
-const static uint16_t ESC_FORWARD = 1900;
+static constexpr uint16_t ESC_HALT = 1500;
+static constexpr uint16_t ESC_REVERSE = 1100;
+static constexpr uint16_t ESC_FORWARD = 1900;
 
 //it takes roughly this many ms for our ESCs to initialize after being fed a halt signal
-const static uint16_t INIT_DELAY = 7000;
+static constexpr uint16_t INIT_DELAY = 7000;
 
 //coefficients for inputs to limit the speed of the thrusters so we don't draw too many amps
 static constexpr float MOVE_SPEED = 0.6;

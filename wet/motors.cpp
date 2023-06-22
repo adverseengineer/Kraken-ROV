@@ -7,15 +7,15 @@
 #include "lowercomms.h"
 #include "util.h"
 
-static const uint8_t PINS[8] = {2, 3, 4, 5, 6, 7, 8, 9};
+static constexpr uint8_t PINS[8] = {2, 3, 4, 5, 6, 7, 8, 9};
 
 //pulse widths to lerp between to communicate with our ESCs
-const static uint16_t ESC_HALT = 1500;
-const static uint16_t ESC_REVERSE = 1100;
-const static uint16_t ESC_FORWARD = 1900;
+static constexpr uint16_t ESC_HALT = 1500;
+static constexpr uint16_t ESC_REVERSE = 1100;
+static constexpr uint16_t ESC_FORWARD = 1900;
 
 //it takes roughly this many ms for our ESCs to initialize after being fed a halt signal
-const static uint16_t ESC_INIT_DELAY = 7000;
+static constexpr uint16_t ESC_INIT_DELAY = 7000;
 
 static Servo motors[8];
 
@@ -42,12 +42,11 @@ void Motors::Update(void) noexcept {
   }
   LowerComms::GiveSignals(signals); //gets the signals from lowercomms
 
-  for(size_t i = 0; i < 6; i++) {
-    //zeropass
-    if(Util::Sign((int)oldSignals[i] - 1500) != Util::Sign((int)signals[i] - 1500)) {
+  
+  //zero-pass implementation for each thruster
+  for(size_t i = 0; i < 6; i++)
+    if(Util::Sign((int)oldSignals[i] - 1500) != Util::Sign((int)signals[i] - 1500))
       motors[i].writeMicroseconds(1500);
-    }
-  }
   
   //write the escs and the grips
   for(size_t i = 0; i < 8; i++) {

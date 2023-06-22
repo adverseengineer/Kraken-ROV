@@ -1,0 +1,5 @@
+uploading code through ethernet
+building our own controller
+tilt sensor in the capsule to right ourselves
+better placement of thrusters
+greater structural integrity
