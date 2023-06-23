@@ -60,29 +60,51 @@ namespace ESCs {
       int8_t rx = Controls::Analog(PSS_RX);
       int8_t ry = Controls::Analog(PSS_RY);
 
-      Serial.print('(');
-      Serial.print(lx);
-      Serial.print(", ");
-      Serial.print(ly);
-      Serial.print(") (");
-      Serial.print(rx);
-      Serial.print(", ");
-      Serial.print(ry);
-      Serial.println(')');
+      // Serial.print('(');
+      // Serial.print(lx);
+      // Serial.print(", ");
+      // Serial.print(ly);
+      // Serial.print(") (");
+      // Serial.print(rx);
+      // Serial.print(", ");
+      // Serial.print(ry);
+      // Serial.println(')');
 
       //we use the left stick to indicate which way we want to go and how fast
       //this multiplier will always be less than or equal to one
-      float mult = MOVE_SPEED / sqrt(2*(lx*lx+ly*ly));
+
+      // Serial.print("lx: ");
+      // Serial.print(lx);
+      // Serial.print(" | ly: ");
+      // Serial.print(ly);
+      float a = 2*(((float)lx*(float)lx)+((float)ly*(float)ly))/127;
+      // Serial.print(" | a: ");
+      // Serial.print(a);
+      float m = sqrt(a);
+      // Serial.print(" | m: ");
+      // Serial.print(m);
+      //NOTE: we need to cast all the joystick readings to 32-bit here for sqrt to not produce NaN from a negative input caused by integer overflow
+      float mult = MOVE_SPEED / sqrt(a);
       int8_t horz = (int8_t)(lx * mult);
       int8_t vert = (int8_t)(ly * mult);
+      // Serial.print(" | 0.6*m: ");
+      // Serial.print(mult);
+      // Serial.print(" | lx*mult: ");
+      // Serial.print(lx*mult);
+      // Serial.print(" | ly*mult: ");
+      // Serial.print(ly*mult);
+      // Serial.print(" | horz: ");
+      // Serial.print(horz);
+      // Serial.print(" | vert: ");
+      // Serial.println(vert);
 
       //the diagonal pairs that share a multiplier are 0,3 and 1,2. they do however have opposite signs
-      int8_t diag03 = -horz + vert;
-      int8_t diag12 = horz + vert;
-      input[0] += diag03;
-      input[1] += diag12;
-      input[2] -= diag12;
-      input[3] -= diag03;
+      int8_t diag14 = horz + vert;
+      int8_t diag23 = -horz + vert;
+      input[0] += diag14;
+      input[1] += diag23;
+      input[2] -= diag23;
+      input[3] -= diag14;
 
       //we use the horizontal axis of the right stick to indicate which direction to turn and how fast 
       int8_t rot = (int8_t)(rx * TURN_SPEED);
@@ -107,12 +129,12 @@ namespace ESCs {
     for(size_t i = 0; i < 6; i++)
       sigs[i] = map(input[i], Controls::ANALOG_MIN, Controls::ANALOG_MAX, ESC_REVERSE, ESC_FORWARD);
       
-      // Serial.print("{ ");
-      // for(size_t i = 0; i < 8; i++) {
-      //   Serial.print(sigs[i]);
-      //   Serial.print(' ');
-      // }
-      // Serial.println('}');
+      Serial.print("{ ");
+      for(size_t i = 0; i < 8; i++) {
+        Serial.print(sigs[i]);
+        Serial.print(' ');
+      }
+      Serial.println('}');
   }
 }
 
