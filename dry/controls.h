@@ -19,6 +19,11 @@ namespace Controls {
   extern bool ButtonPressed(unsigned int button) noexcept;
   extern bool ButtonReleased(unsigned int button) noexcept;
   extern int8_t Analog(unsigned int axis) noexcept;
+
+  extern uint8_t rumbleStrength;
+
+  static constexpr uint8_t RUMBLE_MIN = 0;
+  static constexpr uint8_t RUMBLE_MAX = 255;
 }
 
 enum ControllerStatus : uint8_t {

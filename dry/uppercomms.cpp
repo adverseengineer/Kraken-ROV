@@ -34,7 +34,7 @@ void UpperComms::Init(void) noexcept {
 
 void UpperComms::Update(void) noexcept {
 
-  Serial.print("{ ");
+  Serial.print("PWM: { ");
   for(size_t i = 0; i < 8; i++) {
     Serial.print(signals[i]);
     Serial.print(' ');
@@ -46,7 +46,6 @@ void UpperComms::Update(void) noexcept {
     
     client.write(buffer, DATA_LEN);
     client.flush();
-    
   }
   else {
     //attempt to reconnect every tick until we are reconnected

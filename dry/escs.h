@@ -32,8 +32,11 @@ namespace ESCs {
   static_assert(TURN_SPEED <= 1);
   static_assert(VERT_SPEED <= 1);
 
+  static bool moveSlowMode = false;
+  static bool turnSlowMode = false;
+
   //use the controller input to update the state of our controller
-  void Update(void) noexcept {
+  static inline void Update(void) noexcept {
 
     //reset all inputs back to zero
     for(size_t i = 0; i < NUM_ESCS; i++)
@@ -45,10 +48,18 @@ namespace ESCs {
     //   input[4] = input[5] = Controls::ANALOG_MAX;
     // else if(Controls::ButtonHeld(PSB_PAD_DOWN))
     //   input[4] = input[5] = Controls::ANALOG_MIN;
-    if(false) (void)0;
     
     //if neither of the overrides is being used, allow for other inputs
-    else {
+    // else {
+
+      if(Controls::ButtonHeld(PSB_CROSS)) {
+        moveSlowMode = !moveSlowMode;
+        Controls::rumbleStrength = Controls::RUMBLE_MAX / 3;
+      }
+      if(Controls::ButtonHeld(PSB_CIRCLE)) {
+        strafeSlowMode = !strafeSlowMode;
+        Controls::rumbleStrength = Controls::RUMBLE_MAX / 3;
+      }
 
       //get our input axes in the range -127(inclusive) to 127(inclusive)
       // int8_t lx = Controls::Analog(PSS_LX);
@@ -56,7 +67,8 @@ namespace ESCs {
       int8_t rx = Controls::Analog(PSS_RX);
       int8_t ry = Controls::Analog(PSS_RY);
 
-      int8_t val = MOVE_SPEED * 127;
+      int8_t val = (int8_t)(MOVE_SPEED * (moveSlowMode ? 0.5 : 1) * 127);
+
       if(Controls::ButtonHeld(PSB_PAD_UP)) {
         input[0] = val * -1;
         input[1] = val * -1;
@@ -98,7 +110,7 @@ namespace ESCs {
       // input[3] -= diag14;
 
       //we use the horizontal axis of the right stick to indicate which direction to turn and how fast 
-      int8_t rot = (int8_t)(rx * TURN_SPEED);
+      int8_t rot = (int8_t)(rx * TURN_SPEED * (turnSlowMode ? 0.5 : 1));
       input[0] += rot;
       input[1] -= rot;
       input[2] -= rot;
@@ -106,7 +118,7 @@ namespace ESCs {
 
       //we use the vertical axis of the right stick to dive and surface
       input[4] = input[5] = (int8_t)(ry * VERT_SPEED);
-    }
+    // }
 
     //NOTE: these neg ones are temporary until i can get quintin to swap the wires
     //the thrusters are 3-phase brushless motors, so swapping any two of the three wires will reverse the motor

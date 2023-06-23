@@ -15,12 +15,13 @@ static const uint16_t WIRELESS_INIT_DELAY = 300;
 //whether or not to read buttons as analog
 static const bool analogModeOn = false;
 //whether or not to enable rumble
-static const bool rumbleModeOn = false;
+static const bool rumbleModeOn = true;
 //our controller object that holds the state of the buttons
 static PS2X controller;
 static uint8_t status = 0;
 static uint8_t type = 0;
-static uint8_t rumbleStrength = 0;
+
+uint8_t Controls::rumbleStrength = 0;
 
 //initialize the controller
 void Controls::Init(void) noexcept {
