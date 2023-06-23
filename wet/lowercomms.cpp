@@ -2,10 +2,14 @@
 //Nick Sells, 2023
 //ETSU Underwater Robotics
 
-#include <Ethernet.h>
 #include <SPI.h>
+#include <Ethernet.h>
 
 #include "lowercomms.h"
+
+uint16_t LowerComms::signals[NUM_SIGS];
+static char* buffer = reinterpret_cast<char*>(LowerComms::signals);
+static constexpr size_t DATA_LEN = sizeof(*LowerComms::signals) * NUM_SIGS;
 
 static uint8_t mac[] = {0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02};
 static const IPAddress ip(10,101,1,211);
@@ -15,10 +19,7 @@ static const IPAddress dns(0,0,0,0);
 static const int port = 4080;
 static EthernetServer server(port);
 
-static uint16_t sigs[8];
-static char* buffer = reinterpret_cast<char*>(&sigs);
-static const size_t DATA_LEN = 16;
-
+//establish the server side of a TCP connection
 void LowerComms::Init(void) noexcept {
 
   //initialize the ethernet shield with our settings
@@ -39,22 +40,8 @@ void LowerComms::Update(void) noexcept {
       if(recv == -1) break;
       buffer[i] = recv;
     }
-    PrintSignals();
+
   }
   else
     Serial.println("No client connected");
-}
-
-void LowerComms::GiveSignals(uint16_t* sigs_) noexcept {
-  for(size_t i = 0; i < 8; i++)
-    sigs_[i] = sigs[i];
-}
-
-void LowerComms::PrintSignals(void) noexcept {
-  Serial.print("{ ");
-  for(size_t i = 0; i < 8; i++) {
-    Serial.print(sigs[i]);
-    Serial.print(' ');
-  }
-  Serial.println('}');
 }

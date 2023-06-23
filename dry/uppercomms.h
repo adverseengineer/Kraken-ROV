@@ -4,13 +4,14 @@
 #ifndef UPPERCOMMS_H
 #define UPPERCOMMS_H
 
+#define NUM_SIGS 10
+
 namespace UpperComms {
+
+  extern uint16_t signals[NUM_SIGS];
 
   extern void Init(void) noexcept;
   extern void Update(void) noexcept;
-  extern void GetSignals(uint16_t*) noexcept;
-
-  extern void PrintSignals(void) noexcept;
 }
 
 #endif

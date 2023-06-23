@@ -4,16 +4,14 @@
 #ifndef LOWERCOMMS_H
 #define LOWERCOMMS_H
 
-#include <PS2X_lib.h>
+#define NUM_SIGS 10
 
 namespace LowerComms {
 
+  extern uint16_t signals[NUM_SIGS];
+
   extern void Init(void) noexcept;
   extern void Update(void) noexcept;
-  extern void GiveSignals(uint16_t*) noexcept;
-  
-  void PrintSignals(void) noexcept;
 }
-
 
 #endif

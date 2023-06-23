@@ -3,8 +3,9 @@
 
 #include <Servo.h>
 
+#include "escs.h"
+#include "grips.h"
 #include "controls.h"
-#include "motors.h"
 #include "uppercomms.h"
 
 
@@ -26,9 +27,10 @@ void setup(void) {
 
 void loop(void) {
 
-  UpperComms::Update();
   Controls::Update();
-  Motors::Update();
+  ESCs::Update();
+  Grips::Update();
+  UpperComms::Update();
   delay(TICK_DELAY);
 }
  

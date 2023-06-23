@@ -7,6 +7,10 @@
 
 #include "uppercomms.h"
 
+uint16_t UpperComms::signals[NUM_SIGS];
+static char* buffer = reinterpret_cast<char*>(UpperComms::signals);
+static constexpr size_t DATA_LEN = sizeof(*UpperComms::signals) * NUM_SIGS;
+
 static uint8_t mac[] = {0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x03};
 static const IPAddress ip(10,101,1,210);
 static const IPAddress subnet(255,255,255,0);
@@ -15,11 +19,7 @@ static const IPAddress dns(0,0,0,0);
 static const int port = 4080;
 static EthernetClient client;
 
-static uint16_t sigs[8];
-static char* buffer = reinterpret_cast<char*>(sigs);
-static const size_t DATA_LEN = 16;
-
-//establish an ethernet connection, and initialize our controller
+//establish the client side of a TCP connection
 void UpperComms::Init(void) noexcept {
 
   //initialize the ethernet shield with our settings
@@ -34,12 +34,12 @@ void UpperComms::Init(void) noexcept {
 
 void UpperComms::Update(void) noexcept {
 
-  // Serial.print("{ ");
-  // for(size_t i = 0; i < 8; i++) {
-  //   Serial.print(sigs[i]);
-  //   Serial.print(' ');
-  // }
-  // Serial.println('}');
+  Serial.print("{ ");
+  for(size_t i = 0; i < 8; i++) {
+    Serial.print(signals[i]);
+    Serial.print(' ');
+  }
+  Serial.println('}');
 
   //if our ethernet connection is still open
   if(client.connected()) {
@@ -60,16 +60,3 @@ void UpperComms::Update(void) noexcept {
   }
 }
 
-void UpperComms::GetSignals(uint16_t* sigs_) noexcept {
-  for(size_t i = 0; i < 8; i++)
-    sigs[i] = sigs_[i];
-}
-
-void UpperComms::PrintSignals(void) noexcept {
-  Serial.print("{ ");
-  for(size_t i = 0; i < 8; i++) {
-    Serial.print(sigs[i]);
-    Serial.print(' ');
-  }
-  Serial.println('}');
-}
