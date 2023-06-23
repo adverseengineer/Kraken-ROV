@@ -58,28 +58,28 @@ namespace ESCs {
 
       int8_t val = MOVE_SPEED * 127;
       if(Controls::ButtonHeld(PSB_PAD_UP)) {
-        input[0] = val;
-        input[1] = val;
+        input[0] = val * -1;
+        input[1] = val * -1;
         input[2] = -val;
         input[3] = -val;
       }
       else if(Controls::ButtonHeld(PSB_PAD_DOWN)) {
-        input[0] = -val;
-        input[1] = -val;
+        input[0] = -val * -1;
+        input[1] = -val * -1;
         input[2] = val;
         input[3] = val;
       }
       else if(Controls::ButtonHeld(PSB_PAD_LEFT)) {
-        input[0] = val;
-        input[1] = -val;
-        input[2] = val;
-        input[3] = -val;
+        input[0] = val * -1;
+        input[1] = -val * -1;
+        input[2] = val * -1;
+        input[3] = -val * -1;
       }
       else if(Controls::ButtonHeld(PSB_PAD_RIGHT)) {
-        input[0] = -val;
-        input[1] = val;
-        input[2] = -val;
-        input[3] = val;
+        input[0] = -val * -1;
+        input[1] = val * -1;
+        input[2] = -val * -1;
+        input[3] = val * -1;
       }
 
       //we use the left stick to indicate which way we want to go and how fast
@@ -113,9 +113,9 @@ namespace ESCs {
     // input[0] *= -1;
     // input[1] *= -1;
     // input[2] *= -1;
-    // input[3] *= -1;
-    // input[4] *= -1;
-    // input[5] *= -1;
+    input[3] *= -1;
+    input[4] *= -1;
+    input[5] *= -1;
 
     //use the final net input values to calculate the PWM signals
     for(size_t i = 0; i < NUM_ESCS; i++)
