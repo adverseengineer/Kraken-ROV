@@ -9,8 +9,7 @@
 
 namespace Controls {
 
-  static const int16_t ANALOG_OFFSET = 128;
-  static const int8_t ANALOG_MIN = -128;
+  static const int8_t ANALOG_MIN = -127;
   static const int8_t ANALOG_MAX = 127;
 
   extern void Init(void) noexcept;
@@ -19,7 +18,7 @@ namespace Controls {
   extern bool ButtonHeld(unsigned int button) noexcept;
   extern bool ButtonPressed(unsigned int button) noexcept;
   extern bool ButtonReleased(unsigned int button) noexcept;
-  extern uint8_t Analog(uint8_t axis) noexcept;
+  extern int8_t Analog(unsigned int axis) noexcept;
 }
 
 enum ControllerStatus : uint8_t {

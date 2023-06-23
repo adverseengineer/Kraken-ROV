@@ -30,7 +30,7 @@ static constexpr float MOVE_SPEED = 0.6;
 static constexpr float TURN_SPEED = 0.4;
 static constexpr float VERT_SPEED = 0.5;
 
-static uint8_t input[6];
+static int8_t input[6];
 static uint16_t sigs[8] = {ESC_HALT, ESC_HALT, ESC_HALT, ESC_HALT, ESC_HALT, ESC_HALT, GRIP_OPEN, GRIP_OPEN};
 
 static_assert(MOVE_SPEED <= 1);
@@ -54,11 +54,21 @@ namespace ESCs {
     //if neither of the overrides is being used, allow for other inputs
     else {
 
-      //get our input axes in the range -128(inclusive) 127(inclusive)
-      int8_t lx = Controls::Analog(PSS_LX) - Controls::ANALOG_OFFSET;
-      int8_t ly = Controls::Analog(PSS_LY) - Controls::ANALOG_OFFSET;
-      int8_t rx = Controls::Analog(PSS_RX) - Controls::ANALOG_OFFSET;
-      int8_t ry = Controls::Analog(PSS_RY) - Controls::ANALOG_OFFSET;
+      //get our input axes in the range -127(inclusive) to 127(inclusive)
+      int8_t lx = Controls::Analog(PSS_LX);
+      int8_t ly = Controls::Analog(PSS_LY);
+      int8_t rx = Controls::Analog(PSS_RX);
+      int8_t ry = Controls::Analog(PSS_RY);
+
+      Serial.print('(');
+      Serial.print(lx);
+      Serial.print(", ");
+      Serial.print(ly);
+      Serial.print(") (");
+      Serial.print(rx);
+      Serial.print(", ");
+      Serial.print(ry);
+      Serial.println(')');
 
       //we use the left stick to indicate which way we want to go and how fast
       //this multiplier will always be less than or equal to one
@@ -96,6 +106,13 @@ namespace ESCs {
 
     for(size_t i = 0; i < 6; i++)
       sigs[i] = map(input[i], Controls::ANALOG_MIN, Controls::ANALOG_MAX, ESC_REVERSE, ESC_FORWARD);
+      
+      // Serial.print("{ ");
+      // for(size_t i = 0; i < 8; i++) {
+      //   Serial.print(sigs[i]);
+      //   Serial.print(' ');
+      // }
+      // Serial.println('}');
   }
 }
 

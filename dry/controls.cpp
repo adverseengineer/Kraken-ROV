@@ -82,6 +82,8 @@ bool Controls::ButtonPressed(unsigned int button) noexcept {
 bool Controls::ButtonReleased(unsigned int button) noexcept {
   return controller.ButtonReleased(button);
 }
-uint8_t Controls::Analog(uint8_t axis) noexcept {
-  return controller.Analog(axis);
+int8_t Controls::Analog(unsigned int axis) noexcept {
+  int8_t val = (uint8_t) controller.Analog(axis) - 128;
+  if(val < 0) val++;
+  return val;
 }

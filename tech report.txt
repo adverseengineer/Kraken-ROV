@@ -1,0 +1,17 @@
+//CODE/INTERFACE:
+The code for Kraken is split into two parts. We have the dry code, which runs on an Arduino in the control box, and we have the wet code, which runs on an Arduino inside Kraken's watertight enclosure.
+
+The two Arduinos communicate over an ethernet cable, because it is the most reliable way we found to transmit a wired signal through the entire tether.
+
+The dry code is responsible for establishing the client side of a TCP connection, interfacing with our Playstation 2 controller, interpreting controller input to generate PWM signals, and sending those signals along to the server.
+
+The wet code is responsible for establishing the server side of a TCP connection, initializing the ESCs and Servos, receiving PWM signals from the upper Arduino, and writing those signals to the ESCs and Servos.
+
+The Playstation 2 controller interface is made possible by an open-source library. We spliced a PS2 controller wire and identified each of the wires and connected them to the pins of the upper Arduino. We then tell the library what each pin is, and the library takes care of the rest, allowing us to read the state of the controller through a simple function call.
+
+The ethernet connection is made possible by ethernet shields equipped to each of the Arduino. To establish the connection, we assign a unique MAC address and IP address to each of them. We then set the gateway address for each of them to each other's IP address. By assigning the IPs and gateways statically, we bypass DHCP. This gives us two machines with an exceptionally stable bi-directional line of communication.
+
+//MOTORS:
+Kraken is equipped with six BlueRobotics T200 thrusters and ESCs, arranged in a vector configuration. This gives us manueverability in all three dimensions. 
+
+The reason we chose T200's is because they are capable of producing roughly 3.96 Kg f at 1900 PWM, while also being able to produce a steady thrust even at low PWM with minimal cogging.
