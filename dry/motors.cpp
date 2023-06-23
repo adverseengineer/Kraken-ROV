@@ -33,6 +33,13 @@ static constexpr float VERT_SPEED = 0.5;
 static int8_t input[6];
 static uint16_t sigs[8] = {ESC_HALT, ESC_HALT, ESC_HALT, ESC_HALT, ESC_HALT, ESC_HALT, GRIP_OPEN, GRIP_OPEN};
 
+static constexpr float mountAngles[4] = {
+  2.35619449019,
+  0.785398163397,
+  -2.35619449019,
+  -0.785398163397
+};
+
 static_assert(MOVE_SPEED <= 1);
 static_assert(TURN_SPEED <= 1);
 static_assert(VERT_SPEED <= 1);
@@ -55,10 +62,38 @@ namespace ESCs {
     else {
 
       //get our input axes in the range -127(inclusive) to 127(inclusive)
-      int8_t lx = Controls::Analog(PSS_LX);
-      int8_t ly = Controls::Analog(PSS_LY);
+      // int8_t lx = Controls::Analog(PSS_LX);
+      // int8_t ly = Controls::Analog(PSS_LY);
       int8_t rx = Controls::Analog(PSS_RX);
       int8_t ry = Controls::Analog(PSS_RY);
+
+      int8_t val = MOVE_SPEED * 127;
+      if(Controls::ButtonHeld(PSB_PAD_UP)) {
+        input[0] = val;
+        input[1] = val;
+        input[2] = -val;
+        input[3] = -val;
+      }
+      else if(Controls::ButtonHeld(PSB_PAD_DOWN)) {
+        input[0] = -val;
+        input[1] = -val;
+        input[2] = val;
+        input[3] = val;
+      }
+      else if(Controls::ButtonHeld(PSB_PAD_LEFT)) {
+        input[0] = val;
+        input[1] = -val;
+        input[2] = val;
+        input[3] = -val;
+      }
+      else if(Controls::ButtonHeld(PSB_PAD_RIGHT)) {
+        input[0] = -val;
+        input[1] = val;
+        input[2] = -val;
+        input[3] = val;
+      }
+
+      // float lsAngle = atan2(-ly,lx);
 
       // Serial.print('(');
       // Serial.print(lx);
@@ -77,16 +112,16 @@ namespace ESCs {
       // Serial.print(lx);
       // Serial.print(" | ly: ");
       // Serial.print(ly);
-      float a = 2*(((float)lx*(float)lx)+((float)ly*(float)ly))/127;
+      // float a = 2*(((float)lx*(float)lx)+((float)ly*(float)ly))/127;
       // Serial.print(" | a: ");
       // Serial.print(a);
-      float m = sqrt(a);
+      // float m = sqrt(a);
       // Serial.print(" | m: ");
       // Serial.print(m);
       //NOTE: we need to cast all the joystick readings to 32-bit here for sqrt to not produce NaN from a negative input caused by integer overflow
-      float mult = MOVE_SPEED / sqrt(a);
-      int8_t horz = (int8_t)(lx * mult);
-      int8_t vert = (int8_t)(ly * mult);
+      // float mult = MOVE_SPEED / sqrt(a);
+      // int8_t horz = (int8_t)(lx * mult);
+      // int8_t vert = (int8_t)(ly * mult);
       // Serial.print(" | 0.6*m: ");
       // Serial.print(mult);
       // Serial.print(" | lx*mult: ");
@@ -98,13 +133,21 @@ namespace ESCs {
       // Serial.print(" | vert: ");
       // Serial.println(vert);
 
+      // for(size_t i = 0; i < 4; i++) {
+      //   float c = cos(lsAngle - mountAngles[i]);
+      //   Serial.println(c);
+      //   input[i] += MOVE_SPEED * c;
+      // }
+
+      
+
       //the diagonal pairs that share a multiplier are 0,3 and 1,2. they do however have opposite signs
-      int8_t diag14 = horz + vert;
-      int8_t diag23 = -horz + vert;
-      input[0] += diag14;
-      input[1] += diag23;
-      input[2] -= diag23;
-      input[3] -= diag14;
+      // int8_t diag14 = horz + vert;
+      // int8_t diag23 = -horz + vert;
+      // input[0] += diag14;
+      // input[1] += diag23;
+      // input[2] -= diag23;
+      // input[3] -= diag14;
 
       //we use the horizontal axis of the right stick to indicate which direction to turn and how fast 
       int8_t rot = (int8_t)(rx * TURN_SPEED);

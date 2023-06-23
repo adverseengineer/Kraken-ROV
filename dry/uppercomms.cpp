@@ -41,23 +41,23 @@ void UpperComms::Update(void) noexcept {
   // }
   // Serial.println('}');
 
-  // //if our ethernet connection is still open
-  // if(client.connected()) {
+  //if our ethernet connection is still open
+  if(client.connected()) {
     
-  //   client.write(buffer, DATA_LEN);
-  //   client.flush();
+    client.write(buffer, DATA_LEN);
+    client.flush();
     
-  // }
-  // else {
-  //   //attempt to reconnect every tick until we are reconnected
-  //   Serial.println(F("Disconnected from server!"));
-  //   client.stop();
+  }
+  else {
+    //attempt to reconnect every tick until we are reconnected
+    Serial.println(F("Disconnected from server!"));
+    client.stop();
 
-  //   if(client.connect(gateway, port))
-  //     Serial.println(F("Successfully reconnected to server!"));
-  //   else
-  //     Serial.println(F("Failed to reconnect to server!"));
-  // }
+    if(client.connect(gateway, port))
+      Serial.println(F("Successfully reconnected to server!"));
+    else
+      Serial.println(F("Failed to reconnect to server!"));
+  }
 }
 
 void UpperComms::GetSignals(uint16_t* sigs_) noexcept {
